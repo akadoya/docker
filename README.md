@@ -6,7 +6,7 @@
 
 <p>&nbsp;</p>
 <h1 align="center">
-  The All-New Directus 7<br>Future-Proof Headless CMS
+  Directus 8
 </h1>
 
 <h3 align="center">
@@ -20,163 +20,32 @@
 
 <p>&nbsp;</p>
 
-> **Warning**: container support is _HIGHLY_ experimental and we're still gathering feedback from the community. We can raise issues or ping us in #docker channel on [Slack](https://slack.directus.io).
-
 # Overview
 
-Directus provides several container images that will help we get started. Even though we maintain extra `kinds`, our officially supported image is based on `php:apache`. All our container images can be found in [docker hub](https://hub.docker.com/r/directus/).
+Directus provides several container images that will help we get started. All our container images can be found in [docker hub](https://hub.docker.com/r/directus/).
 
-# Concepts
+# Reference
 
-This repository has several images in it that follows some organization concepts.
+- [Docker issues](https://github.com/directus/docker/issues)
+- [Docker quick install](https://docs.directus.io/installation/docker.html)
+- [Docker documentation](https://docs.directus.io/docker/overview.html)
+- [Environment variables](https://docs.directus.io/docker/environment.html)
+- [Slack channel #docker](https://directus.chat/)
 
-We've organized our docker images in a way that:
+# Environment variables
 
-- We do a better use of layer caching
-- We avoid as much code duplication on dockerfiles as possible
-- We can make security updates (os/webserver) without modifying application images code
-- We provide a easy way for the end user to extend images
+Our full list of environment variables can be found on our [documentation page](https://docs.directus.io/docker/environment.html). Please make sure to take a look over our overview page as there are some required variables to get run the images.
 
-## Image kinds
+# Versioning
 
-We don't want to force anyone to use only `apache` and even though this is the one directus team officially supports, we know there are many webservers out there and we should be free to use the ones we like. We can also provide more slim versions of images by switching between OS distributions. For example: apache, nginx, caddy, alpine...
+We publish major, minor and patch versions to docker hub, as well as hotfixes and security updates. This means that you can choose between:
 
-Our images are split into 3 image types:
-
-1. [Dist images](#dist-images)
-2. [Base images](#base-images)
-3. [Core images](#core-images)
-
-In most cases, **dist images** are the ones you'll want to use to deploy your directus instances. They are distributed by directus team through [docker hub](https://hub.docker.com/u/directus) under their respective repositories, so **always start from dist images until you find out that you need further customization**.
-
-### Image dependencies
-
-To make final image builds faster, we share common steps through base and core images. Here's how we do that.
-
-<img src=".github\images\inheritance.svg" width="200" />
-
-### Example
-
-#### Core
-
-> directus/core:1.2.3-apache
-
-```dockerfile
-FROM php:7.3-apache
-RUN apt-get update && apt-get install dependency
-...
-```
-
-#### Base (api)
-
-> directus/base:1.2.3-api-apache
-
-```dockerfile
-FROM directus/core:1.2.3-apache
-RUN docker-php-ext-install extension
-...
-```
-
-#### Dist (api)
-
-> directus/api:3.2.1-apache
-
-```dockerfile
-FROM directus/base:1.2.3-api-apache
-ONBUILD COPY . .
-...
-```
-
-#### Dependency diagram
-
-<img src=".github\images\images.svg" width="300" />
-
-We'll cover below what each image does and when to use them.
-
-## Dist images
-
-> These are the images you'll likely want to use to deploy your instances.
-
-Dist images are the images the directus team will build, support and distribute themselves and only contains the default configuration setup. Users will likely use these for their simple setups.
-
-**WARNING: These images ARE NOT built on this repository. They live inside their own repositories with their own release cycles.**
-
-### FQIN
-
-```
-directus/${project}:${version}-${kind}
-```
-
-#### Example
-
-| Variable    | Value  |
-| ----------- | ------ |
-| **project** | api    |
-| **kind**    | apache |
-| **version** | 3.2.1  |
-
-```
-directus/api:3.2.1-apache
-```
-
-## Base images
-
-> These images are the base images used in project (`FROM` statements), they include everything a project need to run.
-
-Every project has its own base images that inherits the core ones (allowing us to further customize the core with project-specific requirements).
-
-For example if we're building an `api` image using `apache`, we will inherit the core image using `FROM directus/base:VERSION-apache` on the first line of its Dockerfile.
-
-These base images are mostly used to simplify the project implementation by adding some `ONBUILD` steps and are meant for more advanced users.
-
-We'll want to use them if we are building our own custom project images as they are ready to accept code from their `ONBUILD` stages.
-
-Dockerfiles inheriting from this base images allows us to add our own extension/hooks and/or install more extensions to PHP.
-
-### FQIN
-
-```
-directus/base:${version}-${project}-${kind}
-```
-
-#### Example
-
-| Variable    | Value |
-| ----------- | ----- |
-| **project** | app   |
-| **kind**    | node  |
-| **version** | 1.2.3 |
-
-```
-directus/base:1.2.3-app-node
-```
-
-## Core images
-
-> These are the clean images, it doesn't include anything related to any directus project.
-
-Core images are the images that contains only setup scripts and server related stuff, this allows us to have consistency over all projects whenever we make fixes and/or security updates are applied to webservers/OS.
-
-These images **DOES NOT** contain any project-specific files besides webserver entrypoints and helper scripts related to the webserver itself, such as install and helper scripts.
-
-The core images exists to be extended by base images (api, app, ...).
-
-### FQIN
-
-```
-directus/core:${version}-${kind}
-```
-
-#### Example
-
-| Variable    | Value  |
-| ----------- | ------ |
-| **version** | 1.2.3  |
-| **kind**    | apache |
-
-```
-directus/core:1.2.3-apache
-```
+- Patches `v8.2.0`
+  > Updates to this tag will receive hotfixes and security updates
+- Minor `v8.2`
+  > Updates to this tag will receive all patches, hotfixes and security updates
+- Major `v8`
+  > Updates to this tag will receive all minor updates, patches, hotfixes and security updates
 
 # Building
 
@@ -191,7 +60,7 @@ In most cases you'll not need to build anything in this repository because we al
 
 ## Executing the build script
 
-We can build [core images](#core-images) using the command `build --type core`.
+We can build images using the command `build` located in bin folder.
 
 > Note: If you're getting "-A: invalid option" issues, try updating your bash console. OSX for example ships with older bash versions. These scripts will only work on bash 4 or newer.
 
@@ -205,15 +74,3 @@ cd docker
 # Invoke build script
 ./bin/build --help
 ```
-
----
-
-# Sandbox
-
-TODO: write about sandbox
-
----
-
-<p align="center">
-  Directus is released under the <a href="http://www.gnu.org/copyleft/gpl.html">GPLv3</a> license. <a href="http://rangerstudio.com">RANGER Studio LLC</a> owns all Directus trademarks and logos on behalf of our project's community. Copyright © 2006-2019, <a href="http://rangerstudio.com">RANGER Studio LLC</a>.
-</p>
