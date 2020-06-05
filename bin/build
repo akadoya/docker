@@ -195,8 +195,8 @@ function build() {
   fi
   mkdir -p ./context/directus
 
-  cp -ra "${context_dir}/." "./context/"
-  cp -ra "${repository_dir}/." "./context/directus/"
+  cp -a "${context_dir}/." "./context/"
+  cp -a "${repository_dir}/." "./context/directus/"
 
   temp_image="temp-directus-${kind}:${repository_commit:0:8}"
   docker build -t ${temp_image} ./context
