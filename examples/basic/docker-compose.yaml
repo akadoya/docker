@@ -21,7 +21,7 @@ services:
   # is properly installed by running the installer.
   #
   directus:
-    image: directus/directus:v8.7-apache
+    image: directus/directus:v8-apache
     ports:
       - 8443:443
       # for version < v8.7.2
