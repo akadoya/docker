@@ -20,7 +20,7 @@ docker-compose up -d
 
 ## Create the projects
 
-Create tenants by accessing `https://localhost:8443/admin/#/install`
+Create tenants by accessing `https://directus.localtest.me:8443/admin/#/install`
 
 > NOTE: After the first tenant is created, you'll need to take note of the super admin token. If you can't remember it, it's located in `data/config/__api.json` file on host, or `/var/directus/config/__api.json` within the container.
 
@@ -40,5 +40,5 @@ To change these values, check the `docker-compose.yml` file.
 
 ## Accessing
 
-- [Create Tenant](https://localhost:8443/admin/#/install)
-- [Directus](https://localhost:8443/)
+- [Create Tenant](https://directus.localtest.me:8443/admin/#/install)
+- [Directus](https://directus.localtest.me:8443/)

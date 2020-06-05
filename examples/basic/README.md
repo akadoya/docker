@@ -42,4 +42,4 @@ docker-compose run directus install
 
 ## Accessing
 
-- [Directus](https://localhost:8443/)
+- [Directus](https://directus.localtest.me:8443/)

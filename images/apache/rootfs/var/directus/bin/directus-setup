@@ -60,7 +60,10 @@ function cmd_install_dependencies() {
 
 function cmd_configure_apache() {
   echo "Configuring apache..."
-  a2enmod rewrite headers
+  openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -sha256 \
+    -keyout /etc/apache2/ssl/server.key -out /etc/apache2/ssl/server.crt \
+    -config /etc/apache2/ssl/req.cnf -extensions 'v3_req'
+  a2enmod rewrite headers ssl
   a2dissite 000-default
   a2enconf directus
   a2ensite directus

@@ -21,7 +21,11 @@ services:
   # is properly installed by running the installer.
   #
   directus:
-    image: directus/directus:v8-apache
+    image: directus/directus:v8.7-apache
+    ports:
+      - 8443:443
+      # for version < v8.7.2
+      # - 80:80
     environment:
       # App
       DIRECTUS_ENV: "production"
@@ -42,23 +46,12 @@ services:
     volumes:
       - ./data/config:/var/directus/config
       - ./data/uploads:/var/directus/public/uploads
+      # to apply your custom ssl cert/key pair
+      # - ./path/to/server.crt:/etc/apache2/ssl/server.crt
+      # - ./path/to/server.key:/etc/apache2/ssl/server.key
 
     networks:
       - database
-      - http
-
-  #
-  # Caddy for HTTPS
-  # https://caddyserver.com/docs/
-  #
-  caddy:
-    image: caddy/caddy
-    command: "caddy reverse-proxy --to http://directus"
-    ports:
-      - 8443:443
-    networks:
-      - http
 
 networks:
   database:
-  http:
